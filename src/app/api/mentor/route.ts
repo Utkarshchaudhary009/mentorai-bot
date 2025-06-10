@@ -1,5 +1,6 @@
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
+import { NextResponse } from 'next/server';
 const model = google('gemini-2.0-flash-lite-preview-02-05');
 
 export const maxDuration = 60;
@@ -16,5 +17,5 @@ export async function POST(req: Request) {
             },
         },
     });
-    return result.text;
+    return NextResponse.json(result.text);
 }
