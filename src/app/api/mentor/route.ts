@@ -1,31 +1,30 @@
 import { google } from '@ai-sdk/google';
 import { CoreMessage, generateText } from 'ai';
 import { NextResponse } from 'next/server';
-import { createClient } from 'redis';
-
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-let redis: Awaited<ReturnType<typeof createClient>> | null = null;
-
-try {
-    redis = await createClient({ url: redisUrl }).connect();
-} catch (e) {
-    console.error('Failed to connect to Redis:', e);
-}
 
 const model = google('gemini-1.5-flash-latest');
 const HISTORY_LENGTH = 50; // 25 conversations
 const EXPIRATION_SECONDS = 3600; // 1 hour
 
+// In-memory storage with expiration timestamps
+const conversationStore: Record<string, {
+    messages: CoreMessage[];
+    expiry: number;
+}> = {};
+
+// Cleanup expired conversations periodically
+const cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    Object.keys(conversationStore).forEach(key => {
+        if (conversationStore[key].expiry < now) {
+            delete conversationStore[key];
+        }
+    });
+}, 60000); // Run every minute
+
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
-    if (!redis) {
-        return NextResponse.json(
-            { error: 'Redis client is not connected.' },
-            { status: 500 }
-        );
-    }
-
     // Destructure userId and text from the request body
     const { text, userId } = await req.json();
 
@@ -35,9 +34,19 @@ export async function POST(req: Request) {
 
     // Create a user-specific key
     const conversationKey = `mentorai:history:${userId}`;
+    const now = Date.now();
 
-    const rawHistory = await redis.lRange(conversationKey, 0, HISTORY_LENGTH - 1);
-    const history: CoreMessage[] = rawHistory.map((item) => JSON.parse(item)).reverse();
+    // Initialize or get existing conversation
+    if (!conversationStore[conversationKey] || conversationStore[conversationKey].expiry < now) {
+        conversationStore[conversationKey] = {
+            messages: [],
+            expiry: now + (EXPIRATION_SECONDS * 1000)
+        };
+    }
+
+    // Get history and reset expiration
+    const history = conversationStore[conversationKey].messages;
+    conversationStore[conversationKey].expiry = now + (EXPIRATION_SECONDS * 1000);
 
     const messages: CoreMessage[] = [
         ...history,
@@ -58,16 +67,12 @@ export async function POST(req: Request) {
     const aiResponse = result.text;
 
     if (aiResponse) {
-        const userMessage = JSON.stringify({ role: 'user', content: text });
-        const assistantMessage = JSON.stringify({ role: 'assistant', content: aiResponse });
-
-        // Use a transaction to store messages, trim the list, and set expiration
-        await redis.multi()
-            .lPush(conversationKey, assistantMessage)
-            .lPush(conversationKey, userMessage)
-            .lTrim(conversationKey, 0, HISTORY_LENGTH - 1)
-            .expire(conversationKey, EXPIRATION_SECONDS) // Set/reset the 1-hour expiration
-            .exec();
+        // Add new messages to history
+        conversationStore[conversationKey].messages = [
+            { role: 'assistant' as const, content: aiResponse },
+            { role: 'user' as const, content: text },
+            ...history
+        ].slice(0, HISTORY_LENGTH);
     }
 
     return NextResponse.json(aiResponse);
