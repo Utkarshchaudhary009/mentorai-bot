@@ -1,12 +1,12 @@
 import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
+import { generateText } from 'ai';
 const model = google('gemini-2.0-flash-lite-preview-02-05');
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
     const { text } = await req.json();
-    const result = await streamText({
+    const result = await generateText({
         model,
         system: 'You are MentorAI — a friendly, insightful mentor.',
         messages: [{ role: 'user', content: text }],
@@ -16,5 +16,5 @@ export async function POST(req: Request) {
             },
         },
     });
-    return result.toDataStreamResponse();
+    return result.text;
 }

@@ -11,6 +11,12 @@ importers:
       '@ai-sdk/google':
         specifier: ^1.2.19
         version: 1.2.19(zod@3.25.57)
+      '@grammyjs/parse-mode':
+        specifier: ^2.1.2
+        version: 2.1.2(grammy@1.36.3)
+      '@vlad-yakovlev/grammy-reply-with-markdown':
+        specifier: ^2.0.1
+        version: 2.0.1
       ai:
         specifier: ^4.3.16
         version: 4.3.16(react@19.1.0)(zod@3.25.57)
@@ -143,6 +149,12 @@ packages:
   '@eslint/plugin-kit@0.3.1':
     resolution: {integrity: sha512-0J+zgWxHN+xXONWIyPWKFMgVuJoZuGiIFu8yxk7RJjxkzpGmyja5wRFqZIVtjDVOQpV+Rw0iOAjYPE2eQyjr0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@grammyjs/parse-mode@2.1.2':
+    resolution: {integrity: sha512-WyIUqoW4rKj4ktyX8lzbpDaF87w3troekdYjaeigwWItQsxEgBa1gVRc+gAH5369Pm7tOh1MTYD1+TF13WqmeA==}
+    engines: {node: '>=14.13.1'}
+    peerDependencies:
+      grammy: ^1.20.1
 
   '@grammyjs/types@3.20.0':
     resolution: {integrity: sha512-KIoikN5VTj6dcJpzMwXtouzaN3BZJ4jihBuEeXzWr25HtEfCF25V3dN11u+uNYi/9sBDvs0KCKZhyN/xFY0MBg==}
@@ -651,6 +663,12 @@ packages:
     resolution: {integrity: sha512-tI0+FTntE3BD0UxhTP12F/iTtkeMK+qh72/2aSxPZnTlOcMR9CTJid8CdppbSjj9wenq7PNcqScLtpPENH3Lvg==}
     cpu: [x64]
     os: [win32]
+
+  '@vlad-yakovlev/grammy-reply-with-markdown@2.0.1':
+    resolution: {integrity: sha512-MERPSWwbQHG4wYudxy9naRmZIpvPdFkQASXuyvRgFjcH9TLEYvskqiGrSLtYZoGk/DnQbC3AsccRBdL0XuDFqg==}
+
+  '@vlad-yakovlev/telegram-md@2.0.0':
+    resolution: {integrity: sha512-qdJYD2N1I7CN0uRboTE2PDvHL9/w519RjIA0bnsOllr8BYIZOzBnjmPqTvg1laZk+dqmcchrHSmEhLGAZBSSfA==}
 
   abort-controller@3.0.0:
     resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
@@ -2035,6 +2053,10 @@ snapshots:
       '@eslint/core': 0.14.0
       levn: 0.4.1
 
+  '@grammyjs/parse-mode@2.1.2(grammy@1.36.3)':
+    dependencies:
+      grammy: 1.36.3
+
   '@grammyjs/types@3.20.0': {}
 
   '@humanfs/core@0.19.1': {}
@@ -2456,6 +2478,12 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.7.13':
     optional: true
+
+  '@vlad-yakovlev/grammy-reply-with-markdown@2.0.1':
+    dependencies:
+      '@vlad-yakovlev/telegram-md': 2.0.0
+
+  '@vlad-yakovlev/telegram-md@2.0.0': {}
 
   abort-controller@3.0.0:
     dependencies:
