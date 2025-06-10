@@ -12,7 +12,7 @@ bot.on('message:text', async ctx => {
         body: JSON.stringify({ text: ctx.message.text }),
     });
     const reply = await res.text();
-    await ctx.reply(reply);
+    await ctx.api.editMessageText(ctx.chat.id, ctx.message.message_id, reply);
 });
 
 export const POST = webhookCallback(bot, 'std/http');
