@@ -12,15 +12,15 @@ const conversationStore: Record<string, {
     expiry: number;
 }> = {};
 
-// Cleanup expired conversations periodically
-const cleanupInterval = setInterval(() => {
-    const now = Date.now();
-    Object.keys(conversationStore).forEach(key => {
-        if (conversationStore[key].expiry < now) {
-            delete conversationStore[key];
-        }
-    });
-}, 60000); // Run every minute
+// // Cleanup expired conversations periodically
+// const cleanupInterval = setInterval(() => {
+//     const now = Date.now();
+//     Object.keys(conversationStore).forEach(key => {
+//         if (conversationStore[key].expiry < now) {
+//             delete conversationStore[key];
+//         }
+//     });
+// }, 60000); // Run every minute
 
 export const maxDuration = 60;
 
